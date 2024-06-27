@@ -1,9 +1,32 @@
 #/bin/bash
+
+# Obtenir la informació de les dades d'una imatge que no és free-trie
+
+NOFREETIER=`aws ec2 describe-images --filters "Name=image-id,Values=ami-0301be0087bfbe7c8" --owners amazon --query "Images[*]" --output table`
+
+FREETIER=`aws ec2 describe-images --filters "Name=image-id,Values=ami-01b799c439fd5516a" --owners amazon --query "Images[*]" --output table`
+
+echo "No Free Tier: $NOFREETIER"
+echo -e "\n\n**********************************************************************************************************************************\n\n"
+echo "Free Tier: $FREETIER"
+
+exit 1 # Només ens interessa aquesta informació per a poder-la analitzar!
+
+# ********************************************************************************************************************
+
+
 TOTALGROUPS=`aws ec2 describe-security-groups --query "SecurityGroups[*].[GroupId,GroupName,Description]" --output table | grep default | grep sg- | wc -l`
 SECURITYGROUPID=`aws ec2 describe-security-groups --query "SecurityGroups[*].[GroupId,GroupName,Description]" --output table | grep default | grep sg- | awk '{print $2}'`
 
-# owners self amazon : màquines free tier
-AMIID=`aws ec2 describe-images --owners self amazon --filters "Name=state,Values=available" --query 'Images[*].[ImageId,Name]' --output table | awk '{print $2}'`
+
+
+
+
+
+
+
+AMIID=`aws ec2 describe-images --owners amazon --filters "Name=state,Values=available"  "Name=is-public,Values=true" "Name=image-type,Values=kernel" \
+         --query 'Images[*].[ImageId,Name]' --output table | awk '{print $2}'`
 
 
 
