@@ -1,7 +1,11 @@
 #/bin/bash
 TOTALGROUPS=`aws ec2 describe-security-groups --query "SecurityGroups[*].[GroupId,GroupName,Description]" --output table | grep default | grep sg- | wc -l`
 SECURITYGROUPID=`aws ec2 describe-security-groups --query "SecurityGroups[*].[GroupId,GroupName,Description]" --output table | grep default | grep sg- | awk '{print $2}'`
-AMIID=`aws ec2 describe-images --owners self amazon --query 'Images[*].[ImageId,Name]' --output table | awk '{print $2}'`
+
+# owners self amazon : màquines free tier
+AMIID=`aws ec2 describe-images --owners self amazon --filters "Name=state,Values=available" --query 'Images[*].[ImageId,Name]' --output table | awk '{print $2}'`
+
+
 
 echo "AMI ID: $AMIID"
 
