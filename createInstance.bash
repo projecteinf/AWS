@@ -1,5 +1,6 @@
 #/bin/bash
 
+# NO HI HA UNA FORMA CLARA DE VEURE LES IMATGES QUE NO SÓN FREE-TIER
 # Obtenir la informació de les dades d'una imatge que no és free-trie
 
 NOFREETIER=`aws ec2 describe-images --filters "Name=image-id,Values=ami-0301be0087bfbe7c8" --owners amazon --query "Images[*]" --output table`
@@ -10,7 +11,6 @@ echo "No Free Tier: $NOFREETIER"
 echo -e "\n\n**********************************************************************************************************************************\n\n"
 echo "Free Tier: $FREETIER"
 
-exit 1 # Només ens interessa aquesta informació per a poder-la analitzar!
 
 # ********************************************************************************************************************
 
