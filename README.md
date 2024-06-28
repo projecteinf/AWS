@@ -31,3 +31,5 @@ En la màquina local (Linux) copiar el contingut del fitxer en la carpeta $HOME/
 La clau del fitxer credentials es correspon al contingut del fitxer AWS CLI 
 
 ![image](https://github.com/projecteinf/AWS/assets/96139692/4b7b36ea-a7ad-49f9-85e3-df7597b83403)
+
+ATENCIÓ : cada vegada que es tanca el laboratori i es torna a obrir, cal canviar el fitxer de credentials amb les noves credencials...
