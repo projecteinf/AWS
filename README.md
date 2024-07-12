@@ -1,5 +1,18 @@
 # AWS
 
+# Iniciar laboratori
+
+1. Accedir a l'Acadèmia d'AWS (https://www.awsacademy.com/) . 
+2. Opció de menú LMS
+3. Accedir als mòduls del curs: https://awsacademy.instructure.com/courses/86115/modules
+4. Accedir al mòdul "Launch AWS Academy Learner Lab"
+5. Accedir a l'opció de menú "Class"
+6. Accedir a "Classes" i a l'opció dins del desplegable de Classes
+
+![Desplegable classes](image-1.png)
+
+7. Start Lab
+
 # Instal·lació AWS CLI
 
 Referència: 
