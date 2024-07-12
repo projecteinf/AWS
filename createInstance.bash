@@ -2,9 +2,6 @@
 
 # Font: https://medium.com/@corymaklin/tutorial-amazon-web-services-part-1-create-virtual-machines-with-aws-cli-b900702bf286
 
-TOTALGROUPS=`aws ec2 describe-security-groups --query "SecurityGroups[*].[GroupId,GroupName,Description]" --output table | grep default | grep sg- | wc -l`
-SECURITYGROUPID=`aws ec2 describe-security-groups --query "SecurityGroups[*].[GroupId,GroupName,Description]" --output table | grep default | grep sg- | awk '{print $2}'`
-AMIID["AMAZON"]=['ami-01b799c439fd5516a','ami-0195204d5dce06d99','ami-0b8aeb1889f1a812a']
 
  
 #   Free tier
@@ -15,27 +12,53 @@ AMIID["AMAZON"]=['ami-01b799c439fd5516a','ami-0195204d5dce06d99','ami-0b8aeb1889
 # Get VPC ID and Subnet ID
 
 ## Get VPC
-VPCID=`aws ec2 describe-vpcs  --vpc-ids --query "Vpcs[*].VpcId"`
+VPC_ID=`aws ec2 describe-vpcs  --vpc-ids --query "Vpcs[*].VpcId"`
+echo "VPC ID: $VPC_ID"
 
 ## Get Subnet ID
-SUBNETSID=`aws ec2 describe-subnets --filters "Name=vpc-id,Values=$VPCID" --query "Subnets[*].SubnetId" --output text`
+SUBNETS_ID=`aws ec2 describe-subnets --filters "Name=vpc-id,Values=$VPC_ID" --query "Subnets[*].SubnetId" --output text`
+echo "Subnet ID: $SUBNETS_ID"
 
-echo "Subnets ID: $SUBNETSID"
+# Get AMI ID
 
-AMIID=`aws ec2 describe-images --owners amazon --filters "Name=state,Values=available"  "Name=is-public,Values=true" "Name=image-type,Values=kernel" \
-         --query 'Images[*].[ImageId,Name]' --output table | awk '{print $2}'`
+## Necessitem que siguin de la capa gratuita. Com que no es poden filtrar per aquesta capa, utilitzem una referència estàtica
 
+##############################################################################################################################################################################
+##                                                                                                                                                                          ##
+##              aws ec2 describe-images --owners amazon --filters  "Name=is-public,Values=true"  --query 'Images[*].[ImageId,Name]' --output table                          ##
+##                                                                                                                                                                          ##
+##############################################################################################################################################################################
 
+## AMI ID for free tier
+AMI_ID["AMAZON"]=['ami-01b799c439fd5516a','ami-0195204d5dce06d99','ami-0b8aeb1889f1a812a'] # AMI ID for free tier
 
-echo "AMI ID: $AMIID"
+# Create a security group
 
-if [ $TOTALGROUPS -eq 1 ]; then
-    echo "There is $TOTALGROUPS security group"
-else
-    echo "There are $TOTALGROUPS security groups"
+TOTAL_GROUPS=`aws ec2 describe-security-groups --query "SecurityGroups[*].[GroupId,GroupName,Description]" --output table | grep default | grep sg- | wc -l`
+echo "Total groups: $TOTAL_GROUPS"
+
+if [ $TOTAL_GROUPS -eq 0 ]; then
+    aws ec2 create-security-group --group-name default --description "Default Security Group"
+    echo "Security Group created"
 fi
-echo "Security Group ID: $SECURITYGROUPID"
 
-# At minimum, we need to open port 22 (SSH protocol) so that you can connect to your instance.
+SECURITY_GROUP_ID=`aws ec2 describe-security-groups --query "SecurityGroups[*].[GroupId,GroupName,Description]" --output table | grep default | grep sg- | awk '{print $2}'`
+echo "Security Group ID: $SECURITY_GROUP_ID"
 
-# aws ec2 authorize-security-group-ingress --group-name example --protocol tcp --port 22 --cidr 0.0.0.0/0
+## Add rules to security group. Allow SSH
+
+SSH_ENABLED=`aws ec2 describe-security-groups --group-ids $SECURITY_GROUP_ID --query "SecurityGroups[*].IpPermissions[?FromPort=='22' && ToPort=='22' && IpProtocol=='tcp'].[IpRanges,Ipv6Ranges,UserIdGroupPairs]"`
+echo "SSH Enabled: $SSH_ENABLED"
+
+
+if [[ ${SSH_ENABLED[*]} ]]; then
+    echo "Allowing SSH"
+    # aws ec2 authorize-security-group-ingress \
+    #     --group-id "$SECURITY_GROUP_ID" \
+    #     --protocol tcp \
+    #     --port 22 \
+    #     --cidr "0.0.0.0/0" 
+fi
+
+# Create SSH Key Pair
+
