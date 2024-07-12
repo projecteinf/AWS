@@ -12,6 +12,15 @@ AMIID["AMAZON"]=['ami-01b799c439fd5516a','ami-0195204d5dce06d99','ami-0b8aeb1889
 #       750 hours of public IPv4 address usage per month, 30 GiB of EBS storage, 2 million IOs, 1 GB of snapshots, and 100 GB of bandwidth to the internet.
 
 
+# Get VPC ID and Subnet ID
+
+## Get VPC
+VPCID=`aws ec2 describe-vpcs  --vpc-ids --query "Vpcs[*].VpcId"`
+
+## Get Subnet ID
+SUBNETSID=`aws ec2 describe-subnets --filters "Name=vpc-id,Values=$VPCID" --query "Subnets[*].SubnetId" --output text`
+
+echo "Subnets ID: $SUBNETSID"
 
 AMIID=`aws ec2 describe-images --owners amazon --filters "Name=state,Values=available"  "Name=is-public,Values=true" "Name=image-type,Values=kernel" \
          --query 'Images[*].[ImageId,Name]' --output table | awk '{print $2}'`
