@@ -4,7 +4,7 @@
 
 TOTALGROUPS=`aws ec2 describe-security-groups --query "SecurityGroups[*].[GroupId,GroupName,Description]" --output table | grep default | grep sg- | wc -l`
 SECURITYGROUPID=`aws ec2 describe-security-groups --query "SecurityGroups[*].[GroupId,GroupName,Description]" --output table | grep default | grep sg- | awk '{print $2}'`
-AMIID['AMAZON']=['ami-01b799c439fd5516a','ami-0195204d5dce06d99','ami-0b8aeb1889f1a812a']
+AMIID["AMAZON"]=['ami-01b799c439fd5516a','ami-0195204d5dce06d99','ami-0b8aeb1889f1a812a']
 
  
 #   Free tier
